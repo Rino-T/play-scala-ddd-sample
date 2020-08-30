@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+  mariadb:
+    image: mariadb:10.4
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: play_clean_scala
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: password
+    ports:
+      - 3306:3306
+    volumes:
+      - ./db/init:/docker-entrypoint-initdb.d
+      - ./db/conf:/etc/mysql/conf.d
+      - ./db/csv:/tmp/csv
