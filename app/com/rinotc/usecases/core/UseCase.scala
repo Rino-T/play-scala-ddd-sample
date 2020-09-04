@@ -1,9 +1,10 @@
 package com.rinotc.usecases.core
 
-abstract class OutputData
 
-abstract class InputData[TOutputData <: OutputData]
+trait OutputData
 
-abstract class UseCase[TInputData <: InputData[TOutputData], TOutputData <: OutputData] {
-  def handle(inputData: TInputData)
+trait InputData[TOutputData <: OutputData]
+
+trait UseCase[TInputData <: InputData[TOutputData], TOutputData <: OutputData] {
+  def handle(inputData: TInputData): TOutputData
 }

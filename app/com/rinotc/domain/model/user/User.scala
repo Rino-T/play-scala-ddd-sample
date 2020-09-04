@@ -10,7 +10,7 @@ case class UserName(value: String) {
   require(value.length >= 3 && value.length <= 10)
 }
 
-sealed trait UserRole
+sealed abstract class UserRole
 
 case object Admin extends UserRole
 

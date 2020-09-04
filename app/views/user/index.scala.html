@@ -1,0 +1,25 @@
+@import viewmodels.user.UserListViewModel
+@(model: UserListViewModel)
+
+@main("UserIndex") {
+  <h1>User List</h1>
+  <div>
+    <table>
+      <th>User Name</th>
+      @model.users.map { user =>
+        <tr>
+          <td>
+            @user.name
+          </td>
+          <td>
+            <a href="@routes.UserController.detail(user.id)">Detail</a>
+          </td>
+        </tr>
+      }
+    </table>
+  </div>
+
+  <div>
+    <a href="@routes.UserController.addInput">Add User</a>
+  </div>
+}
