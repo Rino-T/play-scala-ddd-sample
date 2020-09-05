@@ -9,6 +9,7 @@ GET     /                           controllers.HomeController.index
 
 GET     /user                      controllers.UserController.index
 GET     /user/add/input            controllers.UserController.addInput
+POST    /user/add/input/submit     controllers.UserController.addInputSubmit
 GET     /user/detail/:id           controllers.UserController.detail(id: String)
 
 # Map static resources from the /public folder to the /assets URL path

@@ -6,7 +6,7 @@ import com.rinotc.domain.model.user.{User, UserId, UserName, UserRepository}
 import com.rinotc.usecases.user.add.{UserAddInputData, UserAddOutputData, UserAddUseCase}
 import javax.inject.Inject
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class UserAddInteractor @Inject()(protected val userRepository: UserRepository)
                                  (implicit ec: ExecutionContext) extends UserAddUseCase {

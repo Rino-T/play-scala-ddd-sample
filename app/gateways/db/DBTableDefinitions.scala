@@ -8,7 +8,7 @@ trait DBTableDefinitions {
   protected val profile: JdbcProfile
   import profile.api._
 
-  class UserTable(tag: Tag) extends Table[UserEntity](tag, "User") {
+  class UserTable(tag: Tag) extends Table[UserEntity](tag, "user") {
     val id = column[String]("id", O.PrimaryKey)
     val name = column[String]("name")
     val roleId = column[Int]("role")

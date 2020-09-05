@@ -1,6 +1,11 @@
 import java.time.Clock
 
 import com.google.inject.AbstractModule
+import com.rinotc.domain.application.user.{UserAddInteractor, UserListInteractor}
+import com.rinotc.domain.model.user.UserRepository
+import com.rinotc.usecases.user.add.UserAddUseCase
+import com.rinotc.usecases.user.list.UserListUseCase
+import gateways.user.UserRepositoryImpl
 
 /**
  * This class is a Guice module that tells Guice how to bind several
@@ -17,5 +22,12 @@ class Module extends AbstractModule {
   override def configure(): Unit = {
     // Use the system clock as the default implementation of Clock
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone)
+
+    // UserCase User
+    bind(classOf[UserListUseCase]).to(classOf[UserListInteractor])
+    bind(classOf[UserAddUseCase]).to(classOf[UserAddInteractor])
+
+    // Repository
+    bind(classOf[UserRepository]).to(classOf[UserRepositoryImpl])
   }
 }
