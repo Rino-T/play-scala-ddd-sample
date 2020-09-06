@@ -1,13 +1,12 @@
+@import viewmodels.user.add.UserAddForm.UserAddForm
 @import viewmodels.user.add.UserAddInputViewModel
-@import viewmodels.user.add.UserAddForm.UserAddFormData
-
-@import views.html.helper.options
-@import views.html.helper.CSRF
-@(model: UserAddInputViewModel, form: Form[UserAddFormData])(implicit request: MessagesRequestHeader)
+@import views.html.helper.{CSRF, options}
+@(model: UserAddInputViewModel, form: Form[UserAddForm])(implicit request: MessagesRequestHeader)
 
 @main("UserAddInput") {
   <div>
-    @helper.form(action = CSRF(routes.UserController.addInputSubmit())) {
+    @helper.form(action = routes.UserController.addInputSubmit()) {
+      @helper.CSRF.formField
       @helper.inputText(form("name"))
       @helper.inputRadioGroup(field = form("roleId"), options("admin" -> "管理者", "member" -> "一般"))
       <input type="submit" value="Register" />

@@ -8,4 +8,4 @@
 
 * [Play Framework](https://www.playframework.com/) 2.8.2
 * [Scala](https://www.scala-lang.org/) 2.12.12
-* Java 11 （Adopt-Open-JDK HotSpot）
+* Java 11

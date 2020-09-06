@@ -5,10 +5,9 @@ import com.rinotc.usecases.user.add.{UserAddInputData, UserAddUseCase}
 import com.rinotc.usecases.user.list.{UserListInputData, UserListUseCase}
 import javax.inject.Inject
 import lib.view.converter.user.UserRoleConverter
+import play.api.Logger
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, MessagesAbstractController, MessagesControllerComponents}
-import play.filters.csrf._
-import viewmodels.user.add.UserAddForm.UserAddFormData
 import viewmodels.user.add.{UserAddForm, UserAddInputViewModel}
 import viewmodels.user.{UserListViewModel, UserViewModel}
 
@@ -20,6 +19,8 @@ class UserController @Inject()(
   userListUseCase: UserListUseCase,
   userAddUseCase: UserAddUseCase
 )(implicit ec: ExecutionContext) extends MessagesAbstractController(cc) {
+
+  val userControllerLogger: Logger = Logger("application.userController")
 
   def index: Action[AnyContent] = Action.async { implicit request =>
     userListUseCase.handle(new UserListInputData).users.map { users =>
@@ -34,19 +35,22 @@ class UserController @Inject()(
 
 
   def addInputSubmit(): Action[AnyContent] = Action.async { implicit request =>
-    val form: Form[UserAddFormData] = UserAddForm.form.bindFromRequest()
-    form.value match {
-      case Some(value) =>
-        UserRoleConverter.convert(value.role) match {
-          case Right(role) =>
-            val inputData = UserAddInputData(value.name, role)
-            userAddUseCase.handle(inputData).userId.map { _ =>
-              Redirect(routes.UserController.index())
-            }
-          case Left(error) => Future.successful(BadRequest(error.toString))
-        }
-      case None => Future.successful(BadRequest("BadRequest"))
+    val errorFunction = { formWithErrors: Form[UserAddForm.UserAddForm] =>
+      Future.successful(BadRequest(formWithErrors.toString))
     }
+
+    val successFunction = { data: UserAddForm.UserAddForm =>
+      UserRoleConverter.convert(data.roleId) match {
+        case Right(role) =>
+          val inputData = UserAddInputData(data.name, role)
+          userAddUseCase.handle(inputData).userId.map { _ =>
+            Redirect(routes.UserController.index())
+          }
+        case Left(error) => Future.successful(BadRequest(error.toString))
+      }
+    }
+
+    UserAddForm.form.bindFromRequest.fold(errorFunction, successFunction)
   }
 
 

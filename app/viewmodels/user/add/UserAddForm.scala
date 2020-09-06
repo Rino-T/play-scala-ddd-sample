@@ -1,15 +1,17 @@
 package viewmodels.user.add
 
+import play.api.data.Form
+import play.api.data.Forms._
+
+
 object UserAddForm {
-  import play.api.data.Forms._
-  import play.api.data.Form
 
-  case class UserAddFormData(name: String, role: String)
+  case class UserAddForm(name: String, roleId: String)
 
-  val form: Form[UserAddFormData] = Form(
+  val form: Form[UserAddForm] = Form(
     mapping(
       "name" -> text(minLength = 3, maxLength = 10),
-      "role" -> nonEmptyText
-    )(UserAddFormData.apply)(UserAddFormData.unapply)
-  )
+      "roleId" -> nonEmptyText
+      )(UserAddForm.apply)(UserAddForm.unapply)
+    )
 }
