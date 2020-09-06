@@ -1,7 +1,10 @@
 package controllers
 
 import com.google.inject.Singleton
+import com.rinotc.domain.model.user.{DatabaseError, UserId, UserNotFound}
 import com.rinotc.usecases.user.add.{UserAddInputData, UserAddUseCase}
+import com.rinotc.usecases.user.delete.{UserDeleteInputData, UserDeleteUseCase}
+import com.rinotc.usecases.user.detail.{UserDetailInputData, UserDetailUseCase}
 import com.rinotc.usecases.user.list.{UserListInputData, UserListUseCase}
 import javax.inject.Inject
 import lib.view.converter.user.UserRoleConverter
@@ -9,7 +12,7 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, MessagesAbstractController, MessagesControllerComponents}
 import viewmodels.user.add.{UserAddForm, UserAddInputViewModel}
-import viewmodels.user.{UserListViewModel, UserViewModel}
+import viewmodels.user.{UserDetailViewModel, UserListViewModel, UserViewModel}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -17,7 +20,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class UserController @Inject()(
   cc: MessagesControllerComponents,
   userListUseCase: UserListUseCase,
-  userAddUseCase: UserAddUseCase
+  userAddUseCase: UserAddUseCase,
+  userDetailUseCase: UserDetailUseCase,
+  userDeleteUseCase: UserDeleteUseCase
 )(implicit ec: ExecutionContext) extends MessagesAbstractController(cc) {
 
   val userControllerLogger: Logger = Logger("application.userController")
@@ -54,7 +59,23 @@ class UserController @Inject()(
   }
 
 
-  def detail(id: String): Action[AnyContent] = Action { implicit request =>
-    Ok
+  def detail(id: String): Action[AnyContent] = Action.async { implicit request =>
+    userDetailUseCase.handle(UserDetailInputData(UserId(id))).user.map {
+      case Some(user) =>
+        val viewModel = UserDetailViewModel(user.id.value, user.name.value, UserRoleConverter.convert(user.role))
+        Ok(views.html.user.detail(viewModel))
+      case None => NotFound("UserNotFound")
+    }
+  }
+
+  def deleteSubmit(id: String): Action[AnyContent] = Action.async { implicit request =>
+    val inputData = UserDeleteInputData(UserId(id))
+    userDeleteUseCase.handle(inputData).output.map {
+      case Right(_) => Redirect(routes.UserController.index())
+      case Left(error) => error match {
+        case UserNotFound => NotFound("User Not Found")
+        case DatabaseError => InternalServerError("Database Error")
+      }
+    }
   }
 }
