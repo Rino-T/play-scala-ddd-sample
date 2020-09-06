@@ -1,6 +1,6 @@
 package gateways.user
 
-import com.rinotc.domain.model.user.{DatabaseError, User, UserId, UserNotFound, UserRepository, UserRepositoryError}
+import com.rinotc.domain.model.user._
 import gateways.db.DaoSlick
 import javax.inject.Inject
 import models.{UserEntity, UserRoleIdUndefined}
@@ -17,7 +17,7 @@ class UserRepositoryImpl @Inject()(protected val dbConfigProvider: DatabaseConfi
   val userRepositoryLogger: Logger = Logger("application.userRepository")
 
   override def save(user: User): Future[Int] = {
-    val query = userTable += UserEntity.fromUser(user)
+    val query = userTable insertOrUpdate UserEntity.fromUser(user)
     db.run(query)
   }
 

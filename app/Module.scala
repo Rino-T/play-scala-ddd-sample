@@ -1,12 +1,13 @@
 import java.time.Clock
 
 import com.google.inject.AbstractModule
-import com.rinotc.domain.application.user.{UserAddInteractor, UserDeleteInteractor, UserDetailInteractor, UserListInteractor}
+import com.rinotc.domain.application.user._
 import com.rinotc.domain.model.user.UserRepository
 import com.rinotc.usecases.user.add.UserAddUseCase
 import com.rinotc.usecases.user.delete.UserDeleteUseCase
 import com.rinotc.usecases.user.detail.UserDetailUseCase
 import com.rinotc.usecases.user.list.UserListUseCase
+import com.rinotc.usecases.user.update.UserUpdateUseCase
 import gateways.user.UserRepositoryImpl
 
 /**
@@ -30,6 +31,7 @@ class Module extends AbstractModule {
     bind(classOf[UserAddUseCase]).to(classOf[UserAddInteractor])
     bind(classOf[UserDetailUseCase]).to(classOf[UserDetailInteractor])
     bind(classOf[UserDeleteUseCase]).to(classOf[UserDeleteInteractor])
+    bind(classOf[UserUpdateUseCase]).to(classOf[UserUpdateInteractor])
 
     // Repository
     bind(classOf[UserRepository]).to(classOf[UserRepositoryImpl])

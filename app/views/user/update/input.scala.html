@@ -1,0 +1,19 @@
+@import viewmodels.user.update.UserUpdateForm.UserUpdateForm
+@import viewmodels.user.update.UserUpdateInputViewModel
+
+@(model: UserUpdateInputViewModel, form: Form[UserUpdateForm])(implicit requestHeader: MessagesRequestHeader)
+
+@main("UserUpdateInput") {
+  <div>
+    <div>
+      @helper.form(action = routes.UserController.updateInputSubmit(model.id)) {
+        @helper.CSRF.formField
+        @helper.inputText(form("name"), '_label -> "UserName")
+        <input type="submit" value="Register" />
+      }
+    </div>
+    <div>
+      <a href="@routes.UserController.index()">Back</a>
+    </div>
+  </div>
+}

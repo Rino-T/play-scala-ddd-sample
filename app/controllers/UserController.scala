@@ -1,17 +1,19 @@
 package controllers
 
 import com.google.inject.Singleton
-import com.rinotc.domain.model.user.{DatabaseError, UserId, UserNotFound}
+import com.rinotc.domain.model.user.{DatabaseError, UserId, UserName, UserNotFound}
 import com.rinotc.usecases.user.add.{UserAddInputData, UserAddUseCase}
 import com.rinotc.usecases.user.delete.{UserDeleteInputData, UserDeleteUseCase}
 import com.rinotc.usecases.user.detail.{UserDetailInputData, UserDetailUseCase}
 import com.rinotc.usecases.user.list.{UserListInputData, UserListUseCase}
+import com.rinotc.usecases.user.update.{UserUpdateInputData, UserUpdateUseCase}
 import javax.inject.Inject
 import lib.view.converter.user.UserRoleConverter
 import play.api.Logger
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, MessagesAbstractController, MessagesControllerComponents}
 import viewmodels.user.add.{UserAddForm, UserAddInputViewModel}
+import viewmodels.user.update.{UserUpdateForm, UserUpdateInputViewModel}
 import viewmodels.user.{UserDetailViewModel, UserListViewModel, UserViewModel}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -22,7 +24,8 @@ class UserController @Inject()(
   userListUseCase: UserListUseCase,
   userAddUseCase: UserAddUseCase,
   userDetailUseCase: UserDetailUseCase,
-  userDeleteUseCase: UserDeleteUseCase
+  userDeleteUseCase: UserDeleteUseCase,
+  userUpdateUseCase: UserUpdateUseCase
 )(implicit ec: ExecutionContext) extends MessagesAbstractController(cc) {
 
   val userControllerLogger: Logger = Logger("application.userController")
@@ -66,6 +69,31 @@ class UserController @Inject()(
         Ok(views.html.user.detail(viewModel))
       case None => NotFound("UserNotFound")
     }
+  }
+
+  def updateInput(id: String): Action[AnyContent] = Action.async { implicit request =>
+    userDetailUseCase.handle(UserDetailInputData(UserId(id))).user.map {
+      case Some(user) =>
+        val initialForm = UserUpdateForm.UserUpdateForm(user.name.value)
+        Ok(views.html.user.update.input(UserUpdateInputViewModel(user.id.value), UserUpdateForm.form.fill(initialForm)))
+      case None => NotFound("UserNotFound")
+    }
+  }
+
+  def updateInputSubmit(id: String): Action[AnyContent]  = Action.async { implicit request =>
+    val errorFunction = { formWithErrors: Form[UserUpdateForm.UserUpdateForm] =>
+      Future.successful(BadRequest(formWithErrors.toString))
+    }
+
+    val successFunction = { data: UserUpdateForm.UserUpdateForm =>
+      val inputData = UserUpdateInputData(UserId(id), UserName(data.name))
+      userUpdateUseCase.handle(inputData).output.map {
+        case Right(_) => Redirect(routes.UserController.index())
+        case Left(error) => BadRequest(error.toString)
+      }
+    }
+
+    UserUpdateForm.form.bindFromRequest.fold(errorFunction, successFunction)
   }
 
   def deleteSubmit(id: String): Action[AnyContent] = Action.async { implicit request =>

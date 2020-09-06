@@ -22,7 +22,7 @@
     </div>
 
     <div>
-      <a href="">Modify</a>
+      <a href="@routes.UserController.updateInput(model.id)">Modify</a>
     </div>
     <div>
       @helper.form(action = routes.UserController.deleteSubmit(model.id)) {
