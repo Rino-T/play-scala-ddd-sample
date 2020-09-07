@@ -31,4 +31,12 @@ sbt run
 ## サンプル機能
 
 - [x] UserのCRUD
+
+## play-clean-java との実装対応
+
+- [x] UserのCRUD
+- [ ] UseCaseBusによるControllerのInjectorスリム化
 - [ ] ログイン機能
+
+
+UseCaseBusによるControllerのスリム化は何がInjectして使われているのかが見えにくかったためやりませんでした。
