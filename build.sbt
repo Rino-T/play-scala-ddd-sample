@@ -15,9 +15,9 @@ libraryDependencies ++= Seq(
   ws,
   specs2 % Test,
   guice,
-  "com.typesafe.play" %% "play-slick" % "5.0.0",
-  "org.mariadb.jdbc" % "mariadb-java-client" % "2.6.2"
-  )
+  "com.typesafe.play" %% "play-slick"          % "5.0.0",
+  "org.mariadb.jdbc"   % "mariadb-java-client" % "2.6.2"
+)
 
 unmanagedResourceDirectories in Test += baseDirectory.value / "target" / "web" / "public" / "test"
 
@@ -25,4 +25,4 @@ scalacOptions ++= Seq(
   "-feature",
   "-deprecation",
   "-Xfatal-warnings"
-  )
+)
